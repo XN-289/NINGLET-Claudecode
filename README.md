@@ -115,7 +115,7 @@ state.json schema、章节路径、bookId 算法与 NINGLET-dsh 完全一致—�
 ## 测试
 
 ```bash
-node --test tests/   # 单测 + 集成 + parity，全绿
+node --test tests/*.test.js   # 单测 + 集成 + parity，全绿
 ```
 
 ## License
