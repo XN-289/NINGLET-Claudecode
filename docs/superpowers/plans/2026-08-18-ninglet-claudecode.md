@@ -1837,7 +1837,7 @@ for (const s of ['anti-ai-flavor', 'longform-writing', 'novel-qa', 'novel-outlin
     const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     assert.ok(m, s + ' 缺 frontmatter');
     assert.ok(/^name:\s*\S+$/m.test(m[1]), s + ' 缺 name');
-    assert.ok(/^description:\s*\S+$/m.test(m[1]), s + ' 缺 description');
+    assert.ok(/^description:\s*\S/m.test(m[1]), s + ' 缺 description');
   });
 }
 
