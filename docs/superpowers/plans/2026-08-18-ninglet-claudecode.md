@@ -19,7 +19,7 @@
 - state.json schema 与 dsh 完全一致（validateState 全量校验，坏数据拒绝写入）
 - 报告位置：`novels/<bookId>/report.html`（覆盖旧报告）
 - 纸墨设计系统 token：ground `#F4F2EC`、ink `#2A2A28`、hairline `#D9D6CD`、强调墨蓝 `#3E4C6B`、钩子红 `#C8161D`、深色 ground `#1C1B19`/正文 `#EDEBE4`/线 `#35332E`；无渐变、无 emoji、圆角 2px
-- 测试命令统一 `node --test tests/`，全部绿色才算完成
+- 测试命令统一 `node --test tests/*.test.js`，全部绿色才算完成
 - 提交信息：中文 conventional commits（`feat:` / `test:` / `docs:`）
 
 ---
@@ -43,7 +43,7 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=18.0.0" },
-  "scripts": { "test": "node --test tests/" }
+  "scripts": { "test": "node --test tests/*.test.js" }
 }
 ```
 
@@ -100,7 +100,7 @@ sed -i 's|\.\./src/|../server/engine/|' tests/*.test.js
 
 - [ ] **Step 4: 跑基线测试，确认 27 个全绿**
 
-Run: `node --test tests/`
+Run: `node --test tests/*.test.js`
 Expected: `# pass 27`（anti-ai-engine 9 + book-id 4 + state-reducer 3 + state-schema 7 + word-count 4），`# fail 0`
 
 - [ ] **Step 5: 更新设计文档目录树（tools.js 拆成 tools/ + books.js）**
@@ -226,7 +226,7 @@ for (const c of vectors.cases) {
 
 - [ ] **Step 4: 跑测试确认 parity 全绿**
 
-Run: `node --test tests/`
+Run: `node --test tests/*.test.js`
 Expected: `# pass 66`（27 基线 + 39 parity），`# fail 0`
 
 - [ ] **Step 5: Commit**
@@ -1757,7 +1757,7 @@ Expected: 输出 7 行 `✓` + `SMOKE PASS`，退出码 0
 
 - [ ] **Step 3: 跑全量测试**
 
-Run: `node --test tests/`
+Run: `node --test tests/*.test.js`
 Expected: 全部通过（基线 27 + parity 39 + books 8 + create 4 + scan 4 + settle 5 + memory 8 + read 5 + mcp 5 + report 6 = `# pass 111`，`# fail 0`）
 
 - [ ] **Step 4: Commit**
@@ -2303,7 +2303,7 @@ git commit -m "docs: README（安装/快速开始/故障排查）+ PORT（与 ds
 
 - [ ] **Step 1: 全量测试**
 
-Run: `node --test tests/`
+Run: `node --test tests/*.test.js`
 Expected: `# pass 109+`，`# fail 0`
 
 - [ ] **Step 2: 冒烟测试**
@@ -2357,7 +2357,7 @@ Expected: 14 个提交，工作区干净
 
 ## 完成定义
 
-- `node --test tests/` 全绿（≥111 项）
+- `node --test tests/*.test.js` 全绿（≥111 项）
 - `node scripts/smoke-test.mjs` 输出 `SMOKE PASS`
 - `git status` 干净，提交历史 14 条左右
 - 与 dsh 互通：同一 schema 的 state 可被两边读取（Task 14 实测）
