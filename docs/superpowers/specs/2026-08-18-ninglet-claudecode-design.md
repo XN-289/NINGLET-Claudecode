@@ -47,8 +47,9 @@ NINGLET-Claudecode/
 │   ├── novel-outline-researcher/SKILL.md
 │   └── novel-style-reference/SKILL.md
 ├── server/              # 零依赖 MCP server
-│   ├── index.js         # MCP stdio 协议壳（JSON-RPC over stdin/stdout，自实现）
-│   ├── tools.js         # 8 个工具的实现
+│   ├── index.js         # MCP stdio 协议壳（JSON-RPC over stdin/stdout，自实现）+ 工具注册
+│   ├── books.js         # 书库 fs 访问层（根解析/状态读写/章节读写/书目）
+│   ├── tools/           # 8 个工具的实现（每工具一文件）
 │   ├── engine/          # 纯函数核心：从 dsh src/ 原样复制（互通的基础）
 │   │   ├── anti-ai-engine.js
 │   │   ├── book-id.js
