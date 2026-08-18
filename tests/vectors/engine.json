@@ -1,0 +1,463 @@
+{
+  "source": "dsh D:\\github项目\\AI小说\\NINGLET-dsh\\src",
+  "generatedAt": "2026-08-18T17:38:28.906Z",
+  "cases": [
+    {
+      "fn": "makeBookId",
+      "args": [
+        "吞天魔帝"
+      ],
+      "output": "book-18b0f0"
+    },
+    {
+      "fn": "makeBookId",
+      "args": [
+        "The Dark Lord"
+      ],
+      "output": "the-dark-lord"
+    },
+    {
+      "fn": "makeBookId",
+      "args": [
+        "Hello 世界!"
+      ],
+      "output": "hello"
+    },
+    {
+      "fn": "makeBookId",
+      "args": [
+        "都市修仙"
+      ],
+      "output": "book-7cc844"
+    },
+    {
+      "fn": "slugify",
+      "args": [
+        "The Dark Lord!"
+      ],
+      "output": "the-dark-lord"
+    },
+    {
+      "fn": "hash6",
+      "args": [
+        "吞天魔帝"
+      ],
+      "output": "18b0f0"
+    },
+    {
+      "fn": "isValidBookId",
+      "args": [
+        "the-dark-lord"
+      ],
+      "output": true
+    },
+    {
+      "fn": "isValidBookId",
+      "args": [
+        "book-abc123"
+      ],
+      "output": true
+    },
+    {
+      "fn": "isValidBookId",
+      "args": [
+        "../etc"
+      ],
+      "output": false
+    },
+    {
+      "fn": "isValidBookId",
+      "args": [
+        "a/b"
+      ],
+      "output": false
+    },
+    {
+      "fn": "isValidBookId",
+      "args": [
+        "C:\\x"
+      ],
+      "output": false
+    },
+    {
+      "fn": "isValidBookId",
+      "args": [
+        ""
+      ],
+      "output": false
+    },
+    {
+      "fn": "scanForbidden",
+      "args": [
+        "他心中一凛，不由自主地后退一步。"
+      ],
+      "output": [
+        {
+          "word": "心中一凛",
+          "index": 1,
+          "count": 1
+        },
+        {
+          "word": "不由自主",
+          "index": 6,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "fn": "scanForbidden",
+      "args": [
+        "他退了一步，没说话。"
+      ],
+      "output": []
+    },
+    {
+      "fn": "deDensity",
+      "args": [
+        "他的眼神里透着冷的、硬的光。"
+      ],
+      "output": 0.21428571428571427
+    },
+    {
+      "fn": "deDensity",
+      "args": [
+        ""
+      ],
+      "output": 0
+    },
+    {
+      "fn": "sentenceLengths",
+      "args": [
+        "雨下了一夜。第二天清早，他推开窗。"
+      ],
+      "output": [
+        5,
+        10
+      ]
+    },
+    {
+      "fn": "detectAI",
+      "args": [
+        "他退了一步，没说话。"
+      ],
+      "output": {
+        "score": 100,
+        "hits": []
+      }
+    },
+    {
+      "fn": "detectAI",
+      "args": [
+        "他心中一凛，不由自主地望了过去，眼中闪过一丝复杂。"
+      ],
+      "output": {
+        "score": 91,
+        "hits": [
+          {
+            "rule": "forbidden",
+            "detail": "心中一凛 x1",
+            "severity": 3
+          },
+          {
+            "rule": "forbidden",
+            "detail": "不由自主 x1",
+            "severity": 3
+          },
+          {
+            "rule": "forbidden",
+            "detail": "眼中闪过一丝 x1",
+            "severity": 3
+          }
+        ]
+      }
+    },
+    {
+      "fn": "detectAI",
+      "args": [
+        ""
+      ],
+      "output": {
+        "score": 100,
+        "hits": []
+      }
+    },
+    {
+      "fn": "detectAI",
+      "args": [
+        "他走了。她来了。他看了。她去了。他停了。她跑了。"
+      ],
+      "output": {
+        "score": 90,
+        "hits": [
+          {
+            "rule": "sentence-uniformity",
+            "detail": "句长方差 0.0 < 20",
+            "severity": 10
+          }
+        ]
+      }
+    },
+    {
+      "fn": "rewriteRules",
+      "args": [],
+      "output": "禁用词（出现即视为 AI 味，直接改写）：心中一凛、不由自主、眼中闪过一丝、嘴角勾起、嘴角微微上扬、淡淡道、轻声道、沉吟、半晌、不禁、心头一颤、意味深长、复杂难明、难以言表、五味杂陈、百感交集。避免\"的\"字密度过高（一段不超过 3 个）；避免句长均匀的流水句（长短交替）；避免排比三连与段尾抒情总结；用动作代替\"淡淡道/轻声道\"式对话标签。"
+    },
+    {
+      "fn": "detectLanguage",
+      "args": [
+        "他缓缓睁开眼，望向远方。"
+      ],
+      "output": "zh"
+    },
+    {
+      "fn": "detectLanguage",
+      "args": [
+        "He opened his eyes."
+      ],
+      "output": "en"
+    },
+    {
+      "fn": "countZhChars",
+      "args": [
+        "他望向远方。"
+      ],
+      "output": 5
+    },
+    {
+      "fn": "countZhChars",
+      "args": [
+        "Hello 世界"
+      ],
+      "output": 2
+    },
+    {
+      "fn": "countEnWords",
+      "args": [
+        "He opened his eyes."
+      ],
+      "output": 4
+    },
+    {
+      "fn": "countWords",
+      "args": [
+        "他望向远方。"
+      ],
+      "output": 5
+    },
+    {
+      "fn": "countWords",
+      "args": [
+        "He opened his eyes."
+      ],
+      "output": 4
+    },
+    {
+      "fn": "validateBook",
+      "args": [
+        {
+          "bookId": "the-dark-lord",
+          "title": "The Dark Lord",
+          "genre": "fantasy",
+          "targetChapters": 50,
+          "chapterWords": 2000,
+          "nextChapterIndex": 1
+        }
+      ],
+      "output": {
+        "ok": true,
+        "errors": []
+      }
+    },
+    {
+      "fn": "validateBook",
+      "args": [
+        {
+          "bookId": "../etc",
+          "title": "x"
+        }
+      ],
+      "output": {
+        "ok": false,
+        "errors": [
+          "bookId 非法",
+          "targetChapters 必须为正整数",
+          "chapterWords 必须为正整数",
+          "nextChapterIndex 必须为正整数"
+        ]
+      }
+    },
+    {
+      "fn": "validateBook",
+      "args": [
+        {
+          "bookId": "a-book",
+          "title": "x",
+          "targetChapters": 5,
+          "chapterWords": 100,
+          "nextChapterIndex": 0
+        }
+      ],
+      "output": {
+        "ok": false,
+        "errors": [
+          "nextChapterIndex 必须为正整数"
+        ]
+      }
+    },
+    {
+      "fn": "validateChapter",
+      "args": [
+        {
+          "index": 1,
+          "title": "第一章",
+          "wordCount": 90,
+          "filePath": "chapters/001.md",
+          "aiTasteScore": 80,
+          "status": "draft"
+        }
+      ],
+      "output": {
+        "ok": true,
+        "errors": []
+      }
+    },
+    {
+      "fn": "validateChapter",
+      "args": [
+        {
+          "index": 1,
+          "status": "bogus"
+        }
+      ],
+      "output": {
+        "ok": false,
+        "errors": [
+          "filePath 缺失",
+          "wordCount 必须为非负整数",
+          "aiTasteScore 必须在 [0,100]",
+          "status 必须是 draft/revised/approved"
+        ]
+      }
+    },
+    {
+      "fn": "validateState",
+      "args": [
+        {
+          "book": {
+            "bookId": "the-dark-lord",
+            "title": "The Dark Lord",
+            "genre": "fantasy",
+            "targetChapters": 50,
+            "chapterWords": 2000,
+            "nextChapterIndex": 1
+          },
+          "chapters": [],
+          "summaries": [],
+          "hooks": []
+        }
+      ],
+      "output": {
+        "ok": true,
+        "errors": []
+      }
+    },
+    {
+      "fn": "validateState",
+      "args": [
+        null
+      ],
+      "output": {
+        "ok": false,
+        "errors": [
+          "state is not an object"
+        ]
+      }
+    },
+    {
+      "fn": "validateState",
+      "args": [
+        {
+          "book": null,
+          "chapters": [],
+          "summaries": [],
+          "hooks": []
+        }
+      ],
+      "output": {
+        "ok": false,
+        "errors": [
+          "book.book is not an object"
+        ]
+      }
+    },
+    {
+      "fn": "validateState",
+      "args": [
+        {
+          "book": {
+            "bookId": "b"
+          },
+          "chapters": "nope"
+        }
+      ],
+      "output": {
+        "ok": false,
+        "errors": [
+          "book.title 缺失",
+          "book.targetChapters 必须为正整数",
+          "book.chapterWords 必须为正整数",
+          "book.nextChapterIndex 必须为正整数",
+          "chapters 必须为数组",
+          "summaries 必须为数组",
+          "hooks 必须为数组"
+        ]
+      }
+    },
+    {
+      "fn": "applyChapterDelta",
+      "args": [
+        {
+          "book": {
+            "bookId": "b",
+            "title": "B",
+            "targetChapters": 5,
+            "chapterWords": 100,
+            "nextChapterIndex": 1
+          },
+          "chapters": [],
+          "summaries": [],
+          "hooks": []
+        },
+        {
+          "index": 1,
+          "title": "第一章",
+          "wordCount": 90,
+          "filePath": "chapters/001.md",
+          "aiTasteScore": 80,
+          "status": "draft"
+        }
+      ],
+      "output": {
+        "book": {
+          "bookId": "b",
+          "title": "B",
+          "targetChapters": 5,
+          "chapterWords": 100,
+          "nextChapterIndex": 2
+        },
+        "chapters": [
+          {
+            "index": 1,
+            "title": "第一章",
+            "wordCount": 90,
+            "filePath": "chapters/001.md",
+            "aiTasteScore": 80,
+            "status": "draft"
+          }
+        ],
+        "summaries": [],
+        "hooks": []
+      }
+    }
+  ]
+}
