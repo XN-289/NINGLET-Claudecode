@@ -682,6 +682,7 @@ import { join } from 'node:path';
 import { handler as createBook } from '../server/tools/create-book.js';
 import { name, handler } from '../server/tools/settle-chapter.js';
 import { statePath, chapterPath } from '../server/books.js';
+import { makeBookId } from '../server/engine/book-id.js';
 
 const CLEAN = '雨下了一夜。第二天清早，他推开窗，看见巷口有人支起了油条摊子。摊主是个哑巴，打手势问他要几根。他伸出两根手指。油锅里的面圈翻了个身，滋滋响着，把整条巷子都染成了早饭的味道。';
 
@@ -720,7 +721,7 @@ test('干净正文：落盘章节 + 推进状态 + 合并记忆', async () => {
 test('命中禁用词：拒绝落盘，不写任何文件', async () => {
   tempRoot();
   await createBook({ title: '烟雨楼' });
-  const bookId = 'yan-yu-lou';
+  const bookId = makeBookId('烟雨楼');
   await assert.rejects(
     handler({ bookId, body: CLEAN + '他心中一凛。' }),
     /反 AI 味扫描未通过，拒绝落盘/,
@@ -740,10 +741,10 @@ test('书不存在返回提示', async () => {
 test('章节号连续推进：第二章节号 2、文件名 002', async () => {
   tempRoot();
   await createBook({ title: '烟雨楼' });
-  await handler({ bookId: 'yan-yu-lou', body: CLEAN });
-  const res = await handler({ bookId: 'yan-yu-lou', body: CLEAN });
+  await handler({ bookId: makeBookId('烟雨楼'), body: CLEAN });
+  const res = await handler({ bookId: makeBookId('烟雨楼'), body: CLEAN });
   assert.ok(res.includes('第 2 章完成'));
-  assert.ok(existsSync(chapterPath('yan-yu-lou', 2)));
+  assert.ok(existsSync(chapterPath(makeBookId('烟雨楼'), 2)));
 });
 
 test('元数据', () => {
@@ -893,6 +894,7 @@ import { join } from 'node:path';
 import { handler as createBook } from '../server/tools/create-book.js';
 import { name, handler } from '../server/tools/update-memory.js';
 import { statePath } from '../server/books.js';
+import { makeBookId } from '../server/engine/book-id.js';
 
 function tempRoot() {
   const dir = mkdtempSync(join(tmpdir(), 'ninglet-mem-'));
@@ -903,7 +905,7 @@ function tempRoot() {
 async function setup() {
   tempRoot();
   await createBook({ title: '烟雨楼' });
-  return 'yan-yu-lou';
+  return makeBookId('烟雨楼');
 }
 
 test('角色按名去重合并', async () => {
@@ -1061,6 +1063,7 @@ import { handler as settle } from '../server/tools/settle-chapter.js';
 import { name as lbName, handler as listBooks } from '../server/tools/list-books.js';
 import { name as lcName, handler as listChapters } from '../server/tools/list-chapters.js';
 import { name as rcName, handler as readChapter } from '../server/tools/read-chapter.js';
+import { makeBookId } from '../server/engine/book-id.js';
 
 const CLEAN = '雨下了一夜。第二天清早，他推开窗，看见巷口有人支起了油条摊子。摊主是个哑巴，打手势问他要几根。他伸出两根手指。油锅里的面圈翻了个身，滋滋响着，把整条巷子都染成了早饭的味道。';
 
@@ -1087,8 +1090,8 @@ test('list_books 书库为空返回提示', async () => {
 test('list_chapters 列出章节元数据', async () => {
   tempRoot();
   await createBook({ title: '烟雨楼' });
-  await settle({ bookId: 'yan-yu-lou', body: CLEAN });
-  const out = JSON.parse(await listChapters({ bookId: 'yan-yu-lou' }));
+  await settle({ bookId: makeBookId('烟雨楼'), body: CLEAN });
+  const out = JSON.parse(await listChapters({ bookId: makeBookId('烟雨楼') }));
   assert.equal(out.length, 1);
   assert.equal(out[0].index, 1);
   assert.equal(out[0].score, 100);
@@ -1098,9 +1101,9 @@ test('list_chapters 列出章节元数据', async () => {
 test('read_chapter 读回正文与错误路径', async () => {
   tempRoot();
   await createBook({ title: '烟雨楼' });
-  await settle({ bookId: 'yan-yu-lou', body: CLEAN });
-  assert.equal(await readChapter({ bookId: 'yan-yu-lou', index: 1 }), CLEAN);
-  assert.ok((await readChapter({ bookId: 'yan-yu-lou', index: 9 })).includes('章节不存在'));
+  await settle({ bookId: makeBookId('烟雨楼'), body: CLEAN });
+  assert.equal(await readChapter({ bookId: makeBookId('烟雨楼'), index: 1 }), CLEAN);
+  assert.ok((await readChapter({ bookId: makeBookId('烟雨楼'), index: 9 })).includes('章节不存在'));
   await assert.rejects(readChapter({ bookId: '../etc', index: 1 }), /unsafe bookId/);
 });
 
@@ -1207,6 +1210,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline';
+import { makeBookId } from '../server/engine/book-id.js';
 
 const SERVER = join(dirname(fileURLToPath(import.meta.url)), '..', 'server', 'index.js');
 const CLEAN = '雨下了一夜。第二天清早，他推开窗，看见巷口有人支起了油条摊子。摊主是个哑巴，打手势问他要几根。他伸出两根手指。油锅里的面圈翻了个身，滋滋响着，把整条巷子都染成了早饭的味道。';
@@ -1267,11 +1271,11 @@ test('tools/call 全流程：建书→结算→列章', async () => {
   await rpc('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '0' } });
   const created = await rpc('tools/call', { name: 'novel_create_book', arguments: { title: '烟雨楼' } });
   assert.equal(created.result.isError, false);
-  assert.ok(created.result.content[0].text.includes('bookId=yan-yu-lou'));
-  const settled = await rpc('tools/call', { name: 'novel_settle_chapter', arguments: { bookId: 'yan-yu-lou', body: CLEAN } });
+  assert.ok(created.result.content[0].text.includes('bookId=' + makeBookId('烟雨楼')));
+  const settled = await rpc('tools/call', { name: 'novel_settle_chapter', arguments: { bookId: makeBookId('烟雨楼'), body: CLEAN } });
   assert.equal(settled.result.isError, false);
   assert.ok(settled.result.content[0].text.includes('第 1 章完成'));
-  const listed = await rpc('tools/call', { name: 'novel_list_chapters', arguments: { bookId: 'yan-yu-lou' } });
+  const listed = await rpc('tools/call', { name: 'novel_list_chapters', arguments: { bookId: makeBookId('烟雨楼') } });
   assert.equal(JSON.parse(listed.result.content[0].text).length, 1);
   proc.kill();
 });
@@ -1279,7 +1283,7 @@ test('tools/call 全流程：建书→结算→列章', async () => {
 test('工具错误 → isError 响应', async () => {
   const { proc, rpc } = startServer();
   await rpc('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '0' } });
-  const res = await rpc('tools/call', { name: 'novel_settle_chapter', arguments: { bookId: 'yan-yu-lou', body: CLEAN + '他心中一凛。' } });
+  const res = await rpc('tools/call', { name: 'novel_settle_chapter', arguments: { bookId: makeBookId('烟雨楼'), body: CLEAN + '他心中一凛。' } });
   assert.equal(res.result.isError, true);
   assert.ok(res.result.content[0].text.includes('拒绝落盘'));
   proc.kill();
@@ -1412,6 +1416,7 @@ import { handler as settle } from '../server/tools/settle-chapter.js';
 import { handler as updateMemory } from '../server/tools/update-memory.js';
 import { name, handler } from '../server/tools/generate-report.js';
 import { reportPath } from '../server/books.js';
+import { makeBookId } from '../server/engine/book-id.js';
 
 const CLEAN = '雨下了一夜。第二天清早，他推开窗，看见巷口有人支起了油条摊子。摊主是个哑巴，打手势问他要几根。他伸出两根手指。油锅里的面圈翻了个身，滋滋响着，把整条巷子都染成了早饭的味道。';
 
@@ -1425,11 +1430,11 @@ async function buildBook() {
   tempRoot();
   await createBook({ title: '烟雨楼', genre: '市井', brief: '巷口早点摊的江湖' });
   await settle({
-    bookId: 'yan-yu-lou', body: CLEAN, title: '第一章 油条摊',
+    bookId: makeBookId('烟雨楼'), body: CLEAN, title: '第一章 油条摊',
     summary: '雨夜后主角遇见哑巴摊主。', characters: [{ name: '阿哑', role: '配角', desc: '油条摊主' }],
     hooks: [{ name: '阿哑的来历', status: 'open', note: '似有隐情' }],
   });
-  return 'yan-yu-lou';
+  return makeBookId('烟雨楼');
 }
 
 test('报告生成到 novels/<bookId>/report.html', async () => {
@@ -1670,6 +1675,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline';
+import { makeBookId } from '../server/engine/book-id.js';
 
 const SERVER = join(dirname(fileURLToPath(import.meta.url)), '..', 'server', 'index.js');
 const root = mkdtempSync(join(tmpdir(), 'ninglet-smoke-'));
@@ -1719,11 +1725,11 @@ if (tools.result.tools.length !== 8) fail('tools/list 应有 8 个工具，实�
 ok('tools/list 返回 8 个工具');
 
 const created = await call('novel_create_book', { title: '烟雨楼', genre: '市井', brief: '巷口早点摊的江湖' });
-if (!created.includes('bookId=yan-yu-lou')) fail('建书返回异常：' + created);
+if (!created.includes('bookId=' + makeBookId('烟雨楼'))) fail('建书返回异常：' + created);
 ok('建书 OK：' + created);
 
 const settled = await call('novel_settle_chapter', {
-  bookId: 'yan-yu-lou', body: CLEAN, title: '第一章 油条摊',
+  bookId: makeBookId('烟雨楼'), body: CLEAN, title: '第一章 油条摊',
   summary: '雨夜后主角遇见哑巴摊主。',
   characters: [{ name: '阿哑', role: '配角', desc: '油条摊主' }],
   hooks: [{ name: '阿哑的来历', status: 'open', note: '似有隐情' }],
@@ -1731,17 +1737,17 @@ const settled = await call('novel_settle_chapter', {
 if (!settled.includes('第 1 章完成')) fail('结算异常：' + settled);
 ok('结算 OK：' + settled);
 
-const strict = await rpc('tools/call', { name: 'novel_settle_chapter', arguments: { bookId: 'yan-yu-lou', body: '他心中一凛。' } });
+const strict = await rpc('tools/call', { name: 'novel_settle_chapter', arguments: { bookId: makeBookId('烟雨楼'), body: '他心中一凛。' } });
 if (!strict.result.isError || !strict.result.content[0].text.includes('拒绝落盘')) fail('严格扫描未生效');
 ok('严格扫描 OK：命中禁用词被拒绝落盘');
 
-const report = await call('novel_generate_report', { bookId: 'yan-yu-lou' });
-const reportFile = join(root, 'novels', 'yan-yu-lou', 'report.html');
+const report = await call('novel_generate_report', { bookId: makeBookId('烟雨楼') });
+const reportFile = join(root, 'novels', makeBookId('烟雨楼'), 'report.html');
 if (!existsSync(reportFile)) fail('报告文件不存在');
 if (!readFileSync(reportFile, 'utf8').includes('烟雨楼')) fail('报告内容缺失');
 ok('报告 OK：' + report);
 
-const stateRaw = readFileSync(join(root, 'novels', 'yan-yu-lou', 'story', 'state', 'state.json'), 'utf8');
+const stateRaw = readFileSync(join(root, 'novels', makeBookId('烟雨楼'), 'story', 'state', 'state.json'), 'utf8');
 const state = JSON.parse(stateRaw);
 if (state.book.nextChapterIndex !== 2 || state.chapters.length !== 1) fail('状态机推进异常');
 ok('状态机 OK：nextChapterIndex=2，章节数=1');
