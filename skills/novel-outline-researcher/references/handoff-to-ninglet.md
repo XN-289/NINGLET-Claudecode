@@ -25,4 +25,4 @@
 - 正文：`chapters/NNN.md`（NNN 三位补零）
 - 章节意图：`story/runtime/chapter-NNN.intent.md`
 - HTML 报告：`report.html`
-- 调研报告：`reports/`
+- 调研报告：`novels/<bookId>/reports/`

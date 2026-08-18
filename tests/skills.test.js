@@ -23,7 +23,7 @@ for (const f of files) {
   test('无框架残留引用：' + f.replace(skillsDir, ''), () => {
     const text = readFileSync(f, 'utf8');
     assert.ok(!text.includes('novel-studio'), f + ' 含 novel-studio');
-    assert.ok(!/dsh/i.test(text), f + ' 含 dsh');
+    assert.ok(!/dagang|dsh/i.test(text), f + ' 含 dagang/dsh');
   });
 }
 

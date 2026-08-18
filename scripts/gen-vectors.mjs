@@ -51,7 +51,7 @@ const cases = [
   C('validateBook', [{ bookId: 'a-book', title: 'x', targetChapters: 5, chapterWords: 100, nextChapterIndex: 0 }]),
   C('validateChapter', [chapter]),
   C('validateChapter', [{ index: 1, status: 'bogus' }]),
-  C('validateState', [validBook && { book: validBook, chapters: [], summaries: [], hooks: [] }]),
+  C('validateState', [{ book: validBook, chapters: [], summaries: [], hooks: [] }]),
   C('validateState', [null]),
   C('validateState', [{ book: null, chapters: [], summaries: [], hooks: [] }]),
   C('validateState', [{ book: { bookId: 'b' }, chapters: 'nope' }]),
