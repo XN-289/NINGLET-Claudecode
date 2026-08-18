@@ -1242,7 +1242,7 @@ function startServer() {
 }
 
 test('initialize 握手返回 protocolVersion 与 serverInfo', async () => {
-  const { proc, rpc } = startServer();
+  const { proc, rpc, notify } = startServer();
   const res = await rpc('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '0' } });
   assert.equal(res.result.protocolVersion, '2024-11-05');
   assert.equal(res.result.serverInfo.name, 'ninglet');
@@ -1335,8 +1335,13 @@ async function handle(method, params) {
     case 'tools/call': {
       const tool = TOOLS.find((t) => t.name === params.name);
       if (!tool) throw new Error('未知工具：' + params.name);
-      const text = await tool.handler(params.arguments || {});
-      return { content: [{ type: 'text', text }], isError: false };
+      try {
+        const text = await tool.handler(params.arguments || {});
+        return { content: [{ type: 'text', text }], isError: false };
+      } catch (e) {
+        // 工具执行错误 → isError:true 结果（MCP 标准，Claude 可读错误消息并反应）
+        return { content: [{ type: 'text', text: e.message }], isError: true };
+      }
     }
     default:
       throw new Error('未知方法：' + method);
