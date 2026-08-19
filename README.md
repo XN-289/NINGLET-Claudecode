@@ -29,7 +29,7 @@ NINGLET 是小说创作工具集。它不是「输入大纲、吐正文」的黑
 克隆本仓库，三步装进你的 Claude Code：
 
 ```bash
-git clone <仓库地址> && cd NINGLET-Claudecode   # 本地使用可跳过克隆；发布 GitHub 后替换 <仓库地址>
+git clone git@github.com:XN-289/NINGLET-Claudecode.git && cd NINGLET-Claudecode
 ```
 
 **1. 注册 MCP server**（零依赖，无需 npm install）：
